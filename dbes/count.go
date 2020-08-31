@@ -19,13 +19,7 @@ func (e *Elasticsearch) Count() int64 {
 	}
 
 	json.Unmarshal(count, &result)
-	if err != nil {
-		panic(err)
-	}
 
-	if err != nil {
-		panic(err)
-	}
 	conv := math.Round(result["count"].(float64))
 	return int64(conv)
 }
