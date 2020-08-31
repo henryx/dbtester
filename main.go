@@ -8,26 +8,28 @@ import (
 	"load/dbpg"
 	"log"
 	"os"
-	"strconv"
 	"time"
+
+	"gopkg.in/ini.v1"
 )
 
 type Test interface {
 	Name() string
-	New(host string)
+	New(cfg *ini.Section)
 	Close()
 	Load(size int, filename string)
 	Count() int64
 	Index()
 	Find() int64
+	Url() string
 }
 
-func test(host, db string, size int, filename string) {
+func test(cfg *ini.File) {
 	var test Test
 	var start, end time.Time
 	var duration time.Duration
 
-	switch db {
+	switch cfg.Section("default").Key("database").String() {
 	case "mongo":
 		test = &dbmongo.Mongo{}
 		break
@@ -39,15 +41,18 @@ func test(host, db string, size int, filename string) {
 	case "elasticsearch":
 		test = &dbes.Elasticsearch{}
 	default:
-		panic("Database not supported: " + db)
+		panic("Database not supported: " + cfg.Section("default").Key("database").String())
 	}
 
-	test.New(host)
+	test.New(cfg.Section(cfg.Section("default").Key("database").String()))
 	defer test.Close()
 
-	log.Println("Started load data on", test.Name(), "database (host", host+")")
+	rows := cfg.Section("default").Key("rows").MustInt(1)
+	datafile := cfg.Section("default").Key("datafile").String()
+
+	log.Println("Started load data on", test.Name(), "database (host", test.Url()+")")
 	start = time.Now()
-	test.Load(size, filename)
+	test.Load(rows, datafile)
 	end = time.Now()
 	duration = end.Sub(start)
 	log.Println("Finished load after", duration)
@@ -98,19 +103,18 @@ func test(host, db string, size int, filename string) {
 }
 
 func main() {
+	inifile := "load.ini"
 
 	if len(os.Args) <= 1 {
-		fmt.Println("Usage:", os.Args[0], "<database> <host> <number of records before commit> <filename>")
+		fmt.Println("Usage:", os.Args[0], "[inifile]")
 		os.Exit(1)
 	}
 
-	dbtype := os.Args[1]
-	host := os.Args[2]
-	size, err := strconv.Atoi(os.Args[3])
+	cfg, err := ini.Load(inifile)
 	if err != nil {
-		panic("Cannot parse argument: " + err.Error())
+		fmt.Printf("Fail to read file: %v", err)
+		os.Exit(1)
 	}
-	filename := os.Args[4]
 
-	test(host, dbtype, size, filename)
+	test(cfg)
 }
