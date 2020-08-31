@@ -3,6 +3,7 @@ package dbmongo
 import (
 	"context"
 	"fmt"
+	"gopkg.in/ini.v1"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -12,6 +13,7 @@ import (
 type Mongo struct {
 	client     *mongo.Client
 	collection *mongo.Collection
+	url        string
 }
 
 func (m *Mongo) clean() {
@@ -20,9 +22,16 @@ func (m *Mongo) clean() {
 
 }
 
-func (m *Mongo) New(host string) {
+func (m *Mongo) New(cfg *ini.Section) {
 	var err error
-	m.client, err = mongo.NewClient(options.Client().ApplyURI(fmt.Sprintf("mongodb://%s:27017", host)))
+
+	host := cfg.Key("host").MustString("localhost")
+	port := cfg.Key("port").MustInt(27017)
+	database := cfg.Key("database").MustString("libraries")
+
+	m.url = fmt.Sprintf("mongodb://%s:%d", host, port)
+
+	m.client, err = mongo.NewClient(options.Client().ApplyURI(m.url))
 	if err != nil {
 		panic("Error when opening client")
 	}
@@ -33,7 +42,7 @@ func (m *Mongo) New(host string) {
 		panic("Error when opening connection")
 	}
 
-	m.collection = m.client.Database("libraries").Collection("data")
+	m.collection = m.client.Database(database).Collection("data")
 	m.clean()
 }
 
@@ -43,4 +52,8 @@ func (m *Mongo) Close() {
 
 func (m *Mongo) Name() string {
 	return "MongoDB"
+}
+
+func (m *Mongo) Url() string {
+	return m.url
 }

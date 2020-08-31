@@ -3,12 +3,15 @@ package dbmysql
 import (
 	"database/sql"
 	"fmt"
+	"gopkg.in/ini.v1"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
 type MySQL struct {
-	conn *sql.DB
+	conn     *sql.DB
+	host     string
+	database string
 }
 
 func (db *MySQL) createTable() {
@@ -27,7 +30,7 @@ func (db *MySQL) createTable() {
 }
 
 func (db *MySQL) createDB() {
-	query := "CREATE DATABASE IF NOT EXISTS test"
+	query := fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s", db.database)
 
 	tx, err := db.conn.Begin()
 	if err != nil {
@@ -42,7 +45,7 @@ func (db *MySQL) createDB() {
 }
 
 func (db *MySQL) clean() {
-	query := "DROP DATABASE IF EXISTS test"
+	query := fmt.Sprintf("DROP DATABASE IF EXISTS %s", db.database)
 
 	tx, err := db.conn.Begin()
 	if err != nil {
@@ -56,10 +59,16 @@ func (db *MySQL) clean() {
 	tx.Commit()
 }
 
-func (db *MySQL) New(host string) {
+func (db *MySQL) New(cfg *ini.Section) {
 	var err error
 
-	dsn := fmt.Sprintf("root:Latina,1@tcp(%s:3306)/mysql", host)
+	db.host = cfg.Key("host").MustString("localhost")
+	port := cfg.Key("port").MustInt(3306)
+	user := cfg.Key("user").MustString("root")
+	password := cfg.Key("password").MustString("mysql")
+	db.database = cfg.Key("database").MustString("libraries")
+
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/mysql", user, password, db.host, port)
 	db.conn, err = sql.Open("mysql", dsn)
 	if err != nil {
 		panic("Cannot open database connection: " + err.Error())
@@ -75,5 +84,9 @@ func (db *MySQL) Close() {
 }
 
 func (db *MySQL) Name() string {
-	return "MySQL/MariaDB"
+	return "MySQL"
+}
+
+func (db *MySQL) Url() string {
+	return db.host
 }

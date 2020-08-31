@@ -3,13 +3,14 @@ package dbpg
 import (
 	"database/sql"
 	"fmt"
-	"strings"
-
 	_ "github.com/lib/pq"
+	"gopkg.in/ini.v1"
 )
 
 type Postgres struct {
-	conn  *sql.DB
+	conn     *sql.DB
+	host     string
+	database string
 }
 
 func (db *Postgres) create() {
@@ -19,7 +20,7 @@ func (db *Postgres) create() {
 	if err != nil {
 		panic("Cannot start transaction: " + err.Error())
 	}
-	
+
 	_, err = tx.Exec(query)
 	if err != nil {
 		panic("Cannot create table: " + err.Error())
@@ -34,7 +35,7 @@ func (db *Postgres) clean() {
 	if err != nil {
 		panic("Cannot start transaction: " + err.Error())
 	}
-	
+
 	_, err = tx.Exec(query)
 	if err != nil {
 		panic("Cannot drop table: " + err.Error())
@@ -42,16 +43,16 @@ func (db *Postgres) clean() {
 	tx.Commit()
 }
 
-func (db *Postgres) New(host string) {
+func (db *Postgres) New(cfg *ini.Section) {
 	var err error
 
-	dsn := strings.Join([]string{
-		"user=" + "postgres",
-		"password=" + "Latina,1",
-		"dbname=" + "postgres",
-		fmt.Sprintf("host=%s", host),
-		"sslmode=disable",
-	}, " ")
+	db.host = cfg.Key("host").MustString("localhost")
+	port := cfg.Key("port").MustInt(5432)
+	user := cfg.Key("user").MustString("postgres")
+	password := cfg.Key("password").MustString("postgres")
+	db.database = cfg.Key("database").MustString("postgres")
+
+	dsn := fmt.Sprintf("user=%s password=%s dbname=%s host=%s port=%d sslmode=disable", user, password, db.database, db.host, port)
 	db.conn, err = sql.Open("postgres", dsn)
 	if err != nil {
 		panic("Cannot open database connection: " + err.Error())
@@ -67,4 +68,8 @@ func (db *Postgres) Close() {
 
 func (db *Postgres) Name() string {
 	return "PostgreSQL"
+}
+
+func (db *Postgres) Url() string {
+	return db.host
 }

@@ -5,22 +5,25 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+
+	"gopkg.in/ini.v1"
 )
 
 type Elasticsearch struct {
-	url   string
+	host  string
+	port  int
 	index string
 }
 
 func (e *Elasticsearch) call(method, uri string, buffer io.Reader) *http.Response {
 	client := &http.Client{}
-	
+
 	req, err := http.NewRequest(method, uri, buffer)
 	if err != nil {
 		panic(err)
 	}
 	req.Header.Set("Content-Type", "application/x-ndjson")
-	
+
 	resp, err := client.Do(req)
 	if err != nil {
 		panic(err)
@@ -29,7 +32,7 @@ func (e *Elasticsearch) call(method, uri string, buffer io.Reader) *http.Respons
 }
 
 func (e *Elasticsearch) clean() {
-	e.call("DELETE", fmt.Sprintf("%s/%s", e.url, e.index), bytes.NewBuffer([]byte(nil)))
+	e.call("DELETE", fmt.Sprintf("%s:%d/%s", e.host, e.port, e.index), bytes.NewBuffer([]byte(nil)))
 }
 
 func (e *Elasticsearch) create() {
@@ -52,12 +55,13 @@ func (e *Elasticsearch) create() {
 			}
 		}
 	}`
-	e.call("PUT", fmt.Sprintf("%s/%s", e.url, e.index), bytes.NewBuffer([]byte(mapping)))
+	e.call("PUT", fmt.Sprintf("%s:%d/%s", e.host, e.port, e.index), bytes.NewBuffer([]byte(mapping)))
 }
 
-func (e *Elasticsearch) New(host string) {
-	e.url = fmt.Sprintf("http://%s:9200", host)
-	e.index = "libraries"
+func (e *Elasticsearch) New(cfg *ini.Section) {
+	e.host = cfg.Key("host").MustString("localhost")
+	e.port = cfg.Key("port").MustInt(9200)
+	e.index = cfg.Key("index").MustString("test")
 
 	e.clean()
 	e.create()
@@ -69,4 +73,8 @@ func (e *Elasticsearch) Close() {
 
 func (e *Elasticsearch) Name() string {
 	return "Elasticsearch"
+}
+
+func (e *Elasticsearch) Url() string {
+	return e.host
 }
