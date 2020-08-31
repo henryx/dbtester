@@ -9,8 +9,8 @@ import (
 func (e *Elasticsearch) Index() {
 	mapping := `
 	{"properties": {"key": {"type": "text"}}}}`
-	
-	resp := e.call("PUT", fmt.Sprintf("%s/%s/_mapping", e.url, e.index), bytes.NewBuffer([]byte(mapping)))
+
+	resp := e.call("PUT", fmt.Sprintf("%s:%d/%s/_mapping", e.host, e.port, e.index), bytes.NewBuffer([]byte(mapping)))
 	body, err := ioutil.ReadAll(resp.Body)
 	msg := string(body)
 	defer resp.Body.Close()
