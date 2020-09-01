@@ -103,11 +103,12 @@ func test(cfg *ini.File) {
 }
 
 func main() {
-	inifile := "load.ini"
+	var inifile string
 
 	if len(os.Args) <= 1 {
-		fmt.Println("Usage:", os.Args[0], "[inifile]")
-		os.Exit(1)
+		inifile = "load.ini"
+	} else {
+		inifile = os.Args[1]
 	}
 
 	cfg, err := ini.Load(inifile)
