@@ -11,7 +11,7 @@ import (
 )
 
 func (e *Elasticsearch) save(buf string) {
-	resp := e.call("POST", fmt.Sprintf("%s:%d/%s/_bulk?refresh=wait_for", e.host, e.port, e.index), bytes.NewBuffer([]byte(buf)))
+	resp := e.call("POST", fmt.Sprintf("http://%s:%d/%s/_bulk?refresh=wait_for", e.host, e.port, e.index), bytes.NewBuffer([]byte(buf)))
 
 	body, err := ioutil.ReadAll(resp.Body)
 	msg := string(body)

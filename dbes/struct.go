@@ -32,7 +32,7 @@ func (e *Elasticsearch) call(method, uri string, buffer io.Reader) *http.Respons
 }
 
 func (e *Elasticsearch) clean() {
-	e.call("DELETE", fmt.Sprintf("%s:%d/%s", e.host, e.port, e.index), bytes.NewBuffer([]byte(nil)))
+	e.call("DELETE", fmt.Sprintf("http://%s:%d/%s", e.host, e.port, e.index), bytes.NewBuffer([]byte(nil)))
 }
 
 func (e *Elasticsearch) create() {
@@ -55,7 +55,7 @@ func (e *Elasticsearch) create() {
 			}
 		}
 	}`
-	e.call("PUT", fmt.Sprintf("%s:%d/%s", e.host, e.port, e.index), bytes.NewBuffer([]byte(mapping)))
+	e.call("PUT", fmt.Sprintf("http://%s:%d/%s", e.host, e.port, e.index), bytes.NewBuffer([]byte(mapping)))
 }
 
 func (e *Elasticsearch) New(cfg *ini.Section) {

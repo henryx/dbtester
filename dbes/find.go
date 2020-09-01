@@ -22,7 +22,7 @@ func (e *Elasticsearch) Find() int64 {
 
 	query := `{"query": {"term": {"key.keyword": "/books/OL17806216M"}}}`
 
-	resp := e.call("GET", fmt.Sprintf("%s:%d/%s/_search", e.host, e.port, e.index), bytes.NewBuffer([]byte(query)))
+	resp := e.call("GET", fmt.Sprintf("http://%s:%d/%s/_search", e.host, e.port, e.index), bytes.NewBuffer([]byte(query)))
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
