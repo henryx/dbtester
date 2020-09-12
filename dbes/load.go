@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"strings"
 )
 
 func (e *Elasticsearch) save(buf string) {
@@ -21,7 +22,7 @@ func (e *Elasticsearch) save(buf string) {
 		if err != nil {
 			panic(err)
 		} else {
-			log.Println(buf)
+			log.Println(resp.Status)
 			panic(msg)
 		}
 	}
@@ -29,6 +30,7 @@ func (e *Elasticsearch) save(buf string) {
 
 func (e *Elasticsearch) Load(size int, filename string) {
 	var err error
+	var buf strings.Builder
 
 	inFile, err := os.Open(filename)
 	if err != nil {
@@ -40,13 +42,13 @@ func (e *Elasticsearch) Load(size int, filename string) {
 
 	counter := 0
 	commit := 0
-	buf := ""
+
 	for {
 		line, err := reader.ReadString('\n')
 		if err != nil {
 			if err == io.EOF {
-				if buf != "" {
-					e.save(buf)
+				if buf.Len() == 0 {
+					e.save(buf.String())
 				}
 				break
 			}
@@ -59,13 +61,16 @@ func (e *Elasticsearch) Load(size int, filename string) {
 		}
 		counter++
 
-		buf = buf + `{ "index" : { } }` + "\n" + line
+		buf.WriteString(`{ "index" : { } }`)
+		buf.WriteString("\n")
+		buf.WriteString(line)
+
 		if counter == size {
-			e.save(buf)
+			e.save(buf.String())
 			commit++
 			log.Printf("Committed %d...\n", commit)
 
-			buf = ""
+			buf.Reset()
 			counter = 0
 		}
 	}
