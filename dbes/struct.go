@@ -39,7 +39,7 @@ func (e *Elasticsearch) create() {
 	mapping := `{
 		"settings" : {
 			"index" : {
-				"number_of_shards" : 1,
+				"number_of_shards" : 5,
 				"number_of_replicas" : 0
 			}
 		},
