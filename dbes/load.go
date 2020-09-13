@@ -47,8 +47,10 @@ func (e *Elasticsearch) Load(size int, filename string) {
 		line, err := reader.ReadString('\n')
 		if err != nil {
 			if err == io.EOF {
+				log.Println("Reached end of file")
 				if buf.Len() > 0 {
 					e.save(buf.String())
+					log.Println("Committed last data")
 				}
 				break
 			}
