@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"load/dbcouch"
 	"load/dbes"
 	"load/dbmongo"
 	"load/dbmysql"
@@ -40,6 +41,8 @@ func test(cfg *ini.File) {
 		test = &dbmysql.MySQL{}
 	case "elasticsearch":
 		test = &dbes.Elasticsearch{}
+	case "couchdb":
+		test = &dbcouch.CouchDB{}
 	default:
 		panic("Database not supported: " + cfg.Section("default").Key("database").String())
 	}
