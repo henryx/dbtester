@@ -12,6 +12,7 @@ import (
 )
 
 func (c *CouchDB) save(buf string) {
+	log.Println("Save CouchDB buffer data:\n", buf)
 	resp := c.call("POST", fmt.Sprintf("http://%s:%s@%s:%d/%s/_bulk_docs", c.user, c.password, c.host, c.port, c.database), bytes.NewBuffer([]byte(buf)))
 
 	body, err := ioutil.ReadAll(resp.Body)
@@ -86,7 +87,7 @@ func (c *CouchDB) Load(size int, filename string) {
 			data.WriteString(`{"docs": [`)
 			data.WriteString(buffer)
 			data.WriteString(`]}`)
-			
+
 			c.save(data.String())
 			commit++
 			log.Printf("Committed %d...\n", commit)
