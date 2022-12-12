@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 	"strings"
@@ -14,7 +13,7 @@ import (
 func (e *Elasticsearch) save(buf string) {
 	resp := e.call("POST", fmt.Sprintf("http://%s:%d/%s/_bulk?refresh=wait_for", e.host, e.port, e.index), bytes.NewBuffer([]byte(buf)))
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	msg := string(body)
 	defer resp.Body.Close()
 

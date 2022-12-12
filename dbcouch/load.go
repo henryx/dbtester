@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 	"strings"
@@ -15,7 +14,7 @@ func (c *CouchDB) save(buf string) {
 	log.Println("Save CouchDB buffer data:\n", buf)
 	resp := c.call("POST", fmt.Sprintf("http://%s:%s@%s:%d/%s/_bulk_docs", c.user, c.password, c.host, c.port, c.database), bytes.NewBuffer([]byte(buf)))
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	msg := string(body)
 	defer resp.Body.Close()
 

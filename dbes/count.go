@@ -3,7 +3,7 @@ package dbes
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"math"
 )
 
@@ -13,7 +13,7 @@ func (e *Elasticsearch) Count() int64 {
 	resp := e.call("GET", fmt.Sprintf("http://%s:%d/%s/_count", e.host, e.port, e.index), nil)
 	defer resp.Body.Close()
 
-	count, err := ioutil.ReadAll(resp.Body)
+	count, err := io.ReadAll(resp.Body)
 	if err != nil {
 		panic(err)
 	}
