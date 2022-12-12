@@ -6,6 +6,7 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -29,7 +30,7 @@ func (a *Items) Scan(value interface{}) error {
 func (db *MySQL) Load(size int, filename string) {
 	/* j := Items{} */
 	var tx *sql.Tx
-	var insert string = "INSERT INTO test.test(data) VALUES (?)"
+	var insert string = fmt.Sprintf("INSERT INTO %s.test(data) VALUES (?)", db.database)
 	var err error
 
 	inFile, err := os.Open(filename)
@@ -62,10 +63,10 @@ func (db *MySQL) Load(size int, filename string) {
 			panic("Error when load data: " + err.Error())
 		}
 
-/* 		err = j.Scan([]byte(line))
-		if err != nil {
-			panic("Error when unmarshal data: " + err.Error())
-		} */
+		/* 		err = j.Scan([]byte(line))
+		   		if err != nil {
+		   			panic("Error when unmarshal data: " + err.Error())
+		   		} */
 
 		_, err = tx.Exec(insert, line)
 		if err != nil {

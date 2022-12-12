@@ -15,7 +15,7 @@ type MySQL struct {
 }
 
 func (db *MySQL) createTable() {
-	query := "CREATE TABLE IF NOT EXISTS test.test(data JSON, json_key VARCHAR(50) GENERATED ALWAYS AS (data->>'$.key'))"
+	query := fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s.test(data JSON, json_key VARCHAR(50) GENERATED ALWAYS AS (data->>'$.key'))", db.database)
 
 	tx, err := db.conn.Begin()
 	if err != nil {
