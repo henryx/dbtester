@@ -1,12 +1,12 @@
 package main
 
 import (
+	"dbtest/dbcouch"
+	"dbtest/dbes"
+	"dbtest/dbmongo"
+	"dbtest/dbmysql"
+	"dbtest/dbpg"
 	"fmt"
-	"load/dbcouch"
-	"load/dbes"
-	"load/dbmongo"
-	"load/dbmysql"
-	"load/dbpg"
 	"log"
 	"os"
 	"time"
