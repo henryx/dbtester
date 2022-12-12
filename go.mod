@@ -1,4 +1,4 @@
-module load
+module dbtest
 
 go 1.17
 
