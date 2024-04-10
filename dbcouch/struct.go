@@ -2,11 +2,10 @@ package dbcouch
 
 import (
 	"bytes"
+	"dbtest/cli"
 	"fmt"
 	"io"
 	"net/http"
-
-	"gopkg.in/ini.v1"
 )
 
 type CouchDB struct {
@@ -41,12 +40,12 @@ func (c *CouchDB) create() {
 	c.call("PUT", fmt.Sprintf("http://%s:%s@%s:%d/%s", c.user, c.password, c.host, c.port, c.database), bytes.NewBuffer([]byte(nil)))
 }
 
-func (c *CouchDB) New(cfg *ini.Section) {
-	c.host = cfg.Key("host").MustString("localhost")
-	c.port = cfg.Key("port").MustInt(5984)
-	c.user = cfg.Key("user").MustString("admin")
-	c.password = cfg.Key("password").MustString("password")
-	c.database = cfg.Key("database").MustString("test")
+func (c *CouchDB) New(cli *cli.CLI) {
+	c.host = cli.CouchDB.Host
+	c.port = cli.CouchDB.Port
+	c.user = cli.CouchDB.User
+	c.password = cli.CouchDB.Password
+	c.database = cli.CouchDB.Database
 
 	c.clean()
 	c.create()

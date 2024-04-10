@@ -2,11 +2,10 @@ package dbes
 
 import (
 	"bytes"
+	"dbtest/cli"
 	"fmt"
 	"io"
 	"net/http"
-
-	"gopkg.in/ini.v1"
 )
 
 type Elasticsearch struct {
@@ -58,10 +57,10 @@ func (e *Elasticsearch) create() {
 	e.call("PUT", fmt.Sprintf("http://%s:%d/%s", e.host, e.port, e.index), bytes.NewBuffer([]byte(mapping)))
 }
 
-func (e *Elasticsearch) New(cfg *ini.Section) {
-	e.host = cfg.Key("host").MustString("localhost")
-	e.port = cfg.Key("port").MustInt(9200)
-	e.index = cfg.Key("index").MustString("test")
+func (e *Elasticsearch) New(cli *cli.CLI) {
+	e.host = cli.Elasticsearch.Host
+	e.port = cli.Elasticsearch.Port
+	e.index = cli.Elasticsearch.Index
 
 	e.clean()
 	e.create()

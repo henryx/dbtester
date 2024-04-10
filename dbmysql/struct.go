@@ -2,9 +2,8 @@ package dbmysql
 
 import (
 	"database/sql"
+	"dbtest/cli"
 	"fmt"
-	"gopkg.in/ini.v1"
-
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -59,14 +58,14 @@ func (db *MySQL) clean() {
 	tx.Commit()
 }
 
-func (db *MySQL) New(cfg *ini.Section) {
+func (db *MySQL) New(cli *cli.CLI) {
 	var err error
 
-	db.host = cfg.Key("host").MustString("localhost")
-	port := cfg.Key("port").MustInt(3306)
-	user := cfg.Key("user").MustString("root")
-	password := cfg.Key("password").MustString("mysql")
-	db.database = cfg.Key("database").MustString("libraries")
+	db.host = cli.MySQL.Host
+	port := cli.MySQL.Port
+	user := cli.MySQL.User
+	password := cli.MySQL.Password
+	db.database = cli.MySQL.Database
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/mysql", user, password, db.host, port)
 	db.conn, err = sql.Open("mysql", dsn)

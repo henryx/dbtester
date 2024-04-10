@@ -1,22 +1,21 @@
 package main
 
 import (
+	"dbtest/cli"
 	"dbtest/dbcouch"
 	"dbtest/dbes"
 	"dbtest/dbmongo"
 	"dbtest/dbmysql"
 	"dbtest/dbpg"
-	"fmt"
 	"log"
-	"os"
 	"time"
 
-	"gopkg.in/ini.v1"
+	"github.com/alecthomas/kong"
 )
 
 type Test interface {
 	Name() string
-	New(cfg *ini.Section)
+	New(cli *cli.CLI)
 	Close()
 	Load(size int, filename string)
 	Count() int64
@@ -25,12 +24,12 @@ type Test interface {
 	Url() string
 }
 
-func test(cfg *ini.File) {
+func test(dbtype string, cli *cli.CLI) {
 	var test Test
 	var start, end time.Time
 	var duration time.Duration
 
-	switch cfg.Section("default").Key("database").String() {
+	switch dbtype {
 	case "mongo":
 		test = &dbmongo.Mongo{}
 		break
@@ -44,14 +43,14 @@ func test(cfg *ini.File) {
 	case "couchdb":
 		test = &dbcouch.CouchDB{}
 	default:
-		panic("Database not supported: " + cfg.Section("default").Key("database").String())
+		panic("Database not supported: " + dbtype)
 	}
 
-	test.New(cfg.Section(cfg.Section("default").Key("database").String()))
+	test.New(cli)
 	defer test.Close()
 
-	rows := cfg.Section("default").Key("rows").MustInt(1)
-	datafile := cfg.Section("default").Key("datafile").String()
+	rows := cli.Rows
+	datafile := cli.Datafile
 
 	log.Println("Started load data on", test.Name(), "database (host", test.Url()+")")
 	start = time.Now()
@@ -106,19 +105,9 @@ func test(cfg *ini.File) {
 }
 
 func main() {
-	var inifile string
+	var cli cli.CLI
 
-	if len(os.Args) <= 1 {
-		inifile = "load.ini"
-	} else {
-		inifile = os.Args[1]
-	}
+	ctx := kong.Parse(&cli)
 
-	cfg, err := ini.Load(inifile)
-	if err != nil {
-		fmt.Printf("Fail to read file: %v", err)
-		os.Exit(1)
-	}
-
-	test(cfg)
+	test(ctx.Command(), &cli)
 }

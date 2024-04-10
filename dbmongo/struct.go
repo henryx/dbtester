@@ -2,12 +2,11 @@ package dbmongo
 
 import (
 	"context"
+	"dbtest/cli"
 	"fmt"
-	"gopkg.in/ini.v1"
-	"time"
-
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"time"
 )
 
 type Mongo struct {
@@ -22,12 +21,12 @@ func (m *Mongo) clean() {
 
 }
 
-func (m *Mongo) New(cfg *ini.Section) {
+func (m *Mongo) New(cli *cli.CLI) {
 	var err error
 
-	host := cfg.Key("host").MustString("localhost")
-	port := cfg.Key("port").MustInt(27017)
-	database := cfg.Key("database").MustString("libraries")
+	host := cli.MongoDB.Host
+	port := cli.MongoDB.Port
+	database := cli.MongoDB.Database
 
 	m.url = fmt.Sprintf("mongodb://%s:%d", host, port)
 
