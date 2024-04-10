@@ -9,9 +9,11 @@ import (
 )
 
 type Elasticsearch struct {
-	host  string
-	port  int
-	index string
+	host     string
+	port     int
+	index    string
+	shards   int
+	replicas int
 }
 
 func (e *Elasticsearch) call(method, uri string, buffer io.Reader) *http.Response {
@@ -35,11 +37,11 @@ func (e *Elasticsearch) clean() {
 }
 
 func (e *Elasticsearch) create() {
-	mapping := `{
+	mapping := fmt.Sprintf(`{
 		"settings" : {
 			"index" : {
-				"number_of_shards" : 1,
-				"number_of_replicas" : 0
+				"number_of_shards" : %d,
+				"number_of_replicas" : %d
 			}
 		},
 		"mappings": {
@@ -53,7 +55,8 @@ func (e *Elasticsearch) create() {
 				"table_of_contents": {"enabled": false, "type": "object"}
 			}
 		}
-	}`
+	}`, e.shards, e.replicas)
+
 	e.call("PUT", fmt.Sprintf("http://%s:%d/%s", e.host, e.port, e.index), bytes.NewBuffer([]byte(mapping)))
 }
 
@@ -61,6 +64,8 @@ func (e *Elasticsearch) New(cli *cli.CLI) {
 	e.host = cli.Elasticsearch.Host
 	e.port = cli.Elasticsearch.Port
 	e.index = cli.Elasticsearch.Index
+	e.shards = cli.Elasticsearch.Shards
+	e.replicas = cli.Elasticsearch.Replicas
 
 	e.clean()
 	e.create()

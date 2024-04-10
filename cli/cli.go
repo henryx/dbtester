@@ -11,9 +11,11 @@ type CLI struct {
 		Database string `help:"Set the database name"  short:"D"`
 	} `cmd:"" help:"Execute PostgreSQL tests"`
 	Elasticsearch struct {
-		Host  string `help:"Set the hostname"  short:"H" default:"localhost"`
-		Port  int    `help:"Set listening port"  short:"P" default:"9200"`
-		Index string `help:"Set the index name"  short:"I"`
+		Host     string `help:"Set the hostname"  short:"H" default:"localhost"`
+		Port     int    `help:"Set listening port"  short:"P" default:"9200"`
+		Index    string `help:"Set the index name"  short:"I"`
+		Shards   int    `help:"Set shards number"  short:"S" default:"1"`
+		Replicas int    `help:"Set replicas number"  short:"R" default:"0"`
 	} `cmd:"" help:"Execute Elasticsearch tests"`
 	MySQL struct {
 		Host     string `help:"Set the hostname"  short:"H" default:"localhost"`
