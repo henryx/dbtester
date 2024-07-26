@@ -17,7 +17,7 @@ type Mongo struct {
 
 func (m *Mongo) clean() {
 	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
-	m.collection.Drop(ctx)
+	_ = m.collection.Drop(ctx)
 
 }
 
@@ -30,13 +30,11 @@ func (m *Mongo) New(cli *cli.CLI) {
 
 	m.url = fmt.Sprintf("mongodb://%s:%d", host, port)
 
-	m.client, err = mongo.NewClient(options.Client().ApplyURI(m.url))
-	if err != nil {
-		panic("Error when opening client")
-	}
-
 	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
-	err = m.client.Connect(ctx)
+	m.client, err = mongo.Connect(
+		ctx,
+		options.Client().ApplyURI(m.url),
+	)
 	if err != nil {
 		panic("Error when opening connection")
 	}
@@ -46,7 +44,7 @@ func (m *Mongo) New(cli *cli.CLI) {
 }
 
 func (m *Mongo) Close() {
-	m.client.Disconnect(context.TODO())
+	_ = m.client.Disconnect(context.TODO())
 }
 
 func (m *Mongo) Name() string {
