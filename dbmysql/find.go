@@ -9,7 +9,7 @@ func (db *MySQL) Find() int64 {
 	//j := make(map[string]interface{})
 	j := make([]byte, 0)
 
-	query := fmt.Sprintf(`SELECT data FROM %s.test WHERE json_key = ?`, db.database)
+	query := fmt.Sprintf(`SELECT data FROM %s.json_data WHERE json_key = ?`, db.database)
 
 	row, err := db.conn.Query(query, "/books/OL17806216M")
 	if err != nil {

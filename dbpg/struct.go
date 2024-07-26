@@ -14,7 +14,7 @@ type Postgres struct {
 }
 
 func (db *Postgres) create() {
-	query := "CREATE TABLE IF NOT EXISTS test(data JSONB)"
+	query := "CREATE TABLE IF NOT EXISTS json_data(data JSONB)"
 
 	tx, err := db.conn.Begin()
 	if err != nil {
@@ -25,11 +25,11 @@ func (db *Postgres) create() {
 	if err != nil {
 		panic("Cannot create table: " + err.Error())
 	}
-	tx.Commit()
+	_ = tx.Commit()
 }
 
 func (db *Postgres) clean() {
-	query := "DROP TABLE IF EXISTS test"
+	query := "DROP TABLE IF EXISTS json_data"
 
 	tx, err := db.conn.Begin()
 	if err != nil {
@@ -40,7 +40,7 @@ func (db *Postgres) clean() {
 	if err != nil {
 		panic("Cannot drop table: " + err.Error())
 	}
-	tx.Commit()
+	_ = tx.Commit()
 }
 
 func (db *Postgres) New(cli *cli.CLI) {

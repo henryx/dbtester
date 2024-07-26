@@ -29,7 +29,7 @@ func (a *Items) Scan(value interface{}) error {
 func (db *Postgres) Load(size int, filename string) {
 	/* j := Items{} */
 	var tx *sql.Tx
-	var insert string = "INSERT INTO test VALUES ($1)"
+	var insert string = "INSERT INTO json_data VALUES ($1)"
 	var err error
 
 	inFile, err := os.Open(filename)
@@ -62,10 +62,10 @@ func (db *Postgres) Load(size int, filename string) {
 			panic("Error when load data: " + err.Error())
 		}
 
-/* 		err = j.Scan([]byte(line))
-		if err != nil {
-			panic("Error when unmarshal data: " + err.Error())
-		} */
+		/* 		err = j.Scan([]byte(line))
+		   		if err != nil {
+		   			panic("Error when unmarshal data: " + err.Error())
+		   		} */
 
 		_, err = tx.Exec(insert, line)
 		if err != nil {

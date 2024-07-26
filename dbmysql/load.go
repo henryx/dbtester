@@ -30,7 +30,7 @@ func (a *Items) Scan(value interface{}) error {
 func (db *MySQL) Load(size int, filename string) {
 	/* j := Items{} */
 	var tx *sql.Tx
-	var insert string = fmt.Sprintf("INSERT INTO %s.test(data) VALUES (?)", db.database)
+	var insert string = fmt.Sprintf("INSERT INTO %s.json_data(data) VALUES (?)", db.database)
 	var err error
 
 	inFile, err := os.Open(filename)

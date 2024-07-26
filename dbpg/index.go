@@ -1,16 +1,16 @@
 package dbpg
 
 func (db *Postgres) Index() {
-query := "CREATE INDEX idx_test_1 ON test((data->>'key'))"
+	query := "CREATE INDEX idx_json_data_1 ON json_data((data->>'key'))"
 
 	tx, err := db.conn.Begin()
 	if err != nil {
 		panic("Cannot start transaction: " + err.Error())
 	}
-	
+
 	_, err = tx.Exec(query)
 	if err != nil {
 		panic("Cannot create index: " + err.Error())
 	}
-	tx.Commit()
+	_ = tx.Commit()
 }

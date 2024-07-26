@@ -14,7 +14,7 @@ type MySQL struct {
 }
 
 func (db *MySQL) createTable() {
-	query := fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s.test(data JSON, json_key VARCHAR(50) GENERATED ALWAYS AS (data->>'$.key'))", db.database)
+	query := fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s.json_data(data JSON, json_key VARCHAR(50) GENERATED ALWAYS AS (data->>'$.key'))", db.database)
 
 	tx, err := db.conn.Begin()
 	if err != nil {
@@ -25,7 +25,7 @@ func (db *MySQL) createTable() {
 	if err != nil {
 		panic("Cannot create table: " + err.Error())
 	}
-	tx.Commit()
+	_ = tx.Commit()
 }
 
 func (db *MySQL) createDB() {
@@ -40,7 +40,7 @@ func (db *MySQL) createDB() {
 	if err != nil {
 		panic("Cannot create table: " + err.Error())
 	}
-	tx.Commit()
+	_ = tx.Commit()
 }
 
 func (db *MySQL) clean() {
@@ -55,7 +55,7 @@ func (db *MySQL) clean() {
 	if err != nil {
 		panic("Cannot drop table: " + err.Error())
 	}
-	tx.Commit()
+	_ = tx.Commit()
 }
 
 func (db *MySQL) New(cli *cli.CLI) {

@@ -39,7 +39,7 @@ func (m *Mongo) New(cli *cli.CLI) {
 		panic("Error when opening connection")
 	}
 
-	m.collection = m.client.Database(database).Collection("data")
+	m.collection = m.client.Database(database).Collection("json_data")
 	m.clean()
 }
 

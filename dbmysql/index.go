@@ -3,7 +3,7 @@ package dbmysql
 import "fmt"
 
 func (db *MySQL) Index() {
-	query := fmt.Sprintf("CREATE INDEX idx_test_1 ON %s.test(json_key)", db.database)
+	query := fmt.Sprintf("CREATE INDEX idx_json_data_1 ON %s.json_data(json_key)", db.database)
 
 	tx, err := db.conn.Begin()
 	if err != nil {
@@ -14,5 +14,5 @@ func (db *MySQL) Index() {
 	if err != nil {
 		panic("Cannot create index: " + err.Error())
 	}
-	tx.Commit()
+	_ = tx.Commit()
 }
