@@ -6,7 +6,7 @@ import (
 	"io"
 )
 
-func (e *Elasticsearch) Index() {
+func (e *Elasticsearch) IndexJSON() {
 	mapping := `
 	{"properties": {"key": {"type": "text"}}}}`
 

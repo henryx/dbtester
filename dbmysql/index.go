@@ -2,7 +2,7 @@ package dbmysql
 
 import "fmt"
 
-func (db *MySQL) Index() {
+func (db *MySQL) IndexJSON() {
 	query := fmt.Sprintf("CREATE INDEX idx_json_data_1 ON %s.json_data(json_key)", db.database)
 
 	tx, err := db.conn.Begin()

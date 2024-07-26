@@ -7,7 +7,7 @@ import (
 	"math"
 )
 
-func (e *Elasticsearch) Count() int64 {
+func (e *Elasticsearch) CountJSON() int64 {
 	var result map[string]interface{}
 
 	resp := e.call("GET", fmt.Sprintf("http://%s:%d/%s/_count", e.host, e.port, e.index), nil)

@@ -1,6 +1,6 @@
 package dbpg
 
-func (db *Postgres) Count() int64 {
+func (db *Postgres) CountJSON() int64 {
 	var count int64
 	var err error
 

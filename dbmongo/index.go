@@ -8,7 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func (m *Mongo) Index() {
+func (m *Mongo) IndexJSON() {
 	mod := mongo.IndexModel{
 		Keys: bson.M{
 			"key": 1, // index in ascending order

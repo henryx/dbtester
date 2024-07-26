@@ -1,6 +1,6 @@
 package dbpg
 
-func (db *Postgres) Find() int64 {
+func (db *Postgres) FindJSON() int64 {
 	var counter int64
 
 	counter = 0

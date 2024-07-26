@@ -2,7 +2,7 @@ package dbmysql
 
 import "fmt"
 
-func (db *MySQL) Count() int64 {
+func (db *MySQL) CountJSON() int64 {
 	var count int64
 	var err error
 

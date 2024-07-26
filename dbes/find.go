@@ -17,7 +17,7 @@ type total struct {
 	Value float64 `json:"value"`
 }
 
-func (e *Elasticsearch) Find() int64 {
+func (e *Elasticsearch) FindJSON() int64 {
 	var res result
 
 	query := `{"query": {"term": {"key.keyword": "/books/OL17806216M"}}}`

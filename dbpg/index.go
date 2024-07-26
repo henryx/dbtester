@@ -1,6 +1,6 @@
 package dbpg
 
-func (db *Postgres) Index() {
+func (db *Postgres) IndexJSON() {
 	query := "CREATE INDEX idx_json_data_1 ON json_data((data->>'key'))"
 
 	tx, err := db.conn.Begin()

@@ -1,5 +1,5 @@
 package dbcouch
 
-func (c *CouchDB) Find() int64 {
+func (c *CouchDB) FindJSON() int64 {
 	return -1
 }

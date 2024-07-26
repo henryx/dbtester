@@ -7,7 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func (m *Mongo) Find() int64 {
+func (m *Mongo) FindJSON() int64 {
 	var res bson.M
 	var count int64
 

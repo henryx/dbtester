@@ -2,7 +2,7 @@ package dbmysql
 
 import "fmt"
 
-func (db *MySQL) Find() int64 {
+func (db *MySQL) FindJSON() int64 {
 	var counter int64
 
 	counter = 0

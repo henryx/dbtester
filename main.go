@@ -18,9 +18,9 @@ type Test interface {
 	New(cli *cli.CLI)
 	Close()
 	Load(size int, filename string)
-	Count() int64
-	Index()
-	Find() int64
+	CountJSON() int64
+	IndexJSON()
+	FindJSON() int64
 	Url() string
 }
 
@@ -65,7 +65,7 @@ func test(dbtype string, cli *cli.CLI) {
 	log.Println("------------------")
 	log.Println("Start count without index")
 	start = time.Now()
-	c := test.Count()
+	c := test.CountJSON()
 	end = time.Now()
 	duration = end.Sub(start)
 	log.Printf("Counted %d items in %s", c, duration)
@@ -76,7 +76,7 @@ func test(dbtype string, cli *cli.CLI) {
 	log.Println("------------------")
 	log.Println("Start find without index")
 	start = time.Now()
-	c = test.Find()
+	c = test.FindJSON()
 	end = time.Now()
 	duration = end.Sub(start)
 	log.Printf("Found %d items without index in %s", c, duration)
@@ -87,7 +87,7 @@ func test(dbtype string, cli *cli.CLI) {
 	log.Println("------------------")
 	log.Println("Start index field")
 	start = time.Now()
-	test.Index()
+	test.IndexJSON()
 	end = time.Now()
 	duration = end.Sub(start)
 	log.Printf("Indexed field in %s", duration)
@@ -98,7 +98,7 @@ func test(dbtype string, cli *cli.CLI) {
 	log.Println("------------------")
 	log.Println("Start find with index")
 	start = time.Now()
-	c = test.Find()
+	c = test.FindJSON()
 	end = time.Now()
 	duration = end.Sub(start)
 	log.Printf("Found %d items using index in %s", c, duration)

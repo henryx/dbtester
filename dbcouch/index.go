@@ -1,5 +1,5 @@
 package dbcouch
 
-func (c *CouchDB) Index() {
+func (c *CouchDB) IndexJSON() {
 
 }

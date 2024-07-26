@@ -1,5 +1,5 @@
 package dbcouch
 
-func (c *CouchDB) Count() int64 {
+func (c *CouchDB) CountJSON() int64 {
 	return -1
 }
