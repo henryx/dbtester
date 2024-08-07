@@ -7,6 +7,7 @@ import (
 	"dbtest/dbmongo"
 	"dbtest/dbmysql"
 	"dbtest/dbpg"
+	"dbtest/dbsqlite"
 	"log"
 	"time"
 
@@ -42,6 +43,8 @@ func test(dbtype string, cli *cli.CLI) {
 		test = &dbes.Elasticsearch{}
 	case "couchdb":
 		test = &dbcouch.CouchDB{}
+	case "sqlite":
+		test = &dbsqlite.SQLite{}
 	default:
 		panic("Database not supported: " + dbtype)
 	}

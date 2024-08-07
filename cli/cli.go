@@ -38,4 +38,8 @@ type CLI struct {
 		Password string `help:"Set the password" short:"W"`
 		Database string `help:"Set the database name"  short:"D"`
 	} `cmd:"" help:"Execute CouchDB tests" name:"couchdb"`
+
+	SQLite struct {
+		Database string `help:"Set the database name"  short:"D"`
+	} `cmd:"" help:"Execute SQLite tests" name:"sqlite"`
 }
