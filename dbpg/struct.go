@@ -42,16 +42,29 @@ func (db *Postgres) create() {
 }
 
 func (db *Postgres) clean() {
-	query := "DROP TABLE IF EXISTS json_data"
+	tables := []string{
+		"DROP TABLE IF EXISTS json_data",
+		"DROP TABLE IF EXISTS editions_authors",
+		"DROP TABLE IF EXISTS editions_isbn13",
+		"DROP TABLE IF EXISTS editions_isbn10",
+		"DROP TABLE IF EXISTS editions_publishers",
+		"DROP TABLE IF EXISTS editions_genres",
+		"DROP TABLE IF EXISTS publishers",
+		"DROP TABLE IF EXISTS genres",
+		"DROP TABLE IF EXISTS editions",
+		"DROP TABLE IF EXISTS authors",
+	}
 
 	tx, err := db.conn.Begin()
 	if err != nil {
 		panic("Cannot start transaction: " + err.Error())
 	}
 
-	_, err = tx.Exec(query)
-	if err != nil {
-		panic("Cannot drop table: " + err.Error())
+	for _, table := range tables {
+		_, err = tx.Exec(table)
+		if err != nil {
+			panic("Cannot drop table: " + err.Error())
+		}
 	}
 	_ = tx.Commit()
 }
