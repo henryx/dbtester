@@ -1,7 +1,7 @@
 package main
 
 import (
-	"dbtest/cli"
+	"dbtest/common"
 	"dbtest/dbes"
 	"dbtest/dbmongo"
 	"dbtest/dbmysql"
@@ -16,7 +16,7 @@ import (
 
 type Test interface {
 	Name() string
-	New(cli *cli.CLI)
+	New(cli *common.CLI)
 	Close()
 	Load(size int, filename string)
 	CountJSON() int64
@@ -25,7 +25,7 @@ type Test interface {
 	Url() string
 }
 
-func test(dbtype string, c *cli.CLI) {
+func test(dbtype string, c *common.CLI) {
 	var test Test
 	var start, end time.Time
 	var duration time.Duration
@@ -114,7 +114,7 @@ func test(dbtype string, c *cli.CLI) {
 }
 
 func main() {
-	var c cli.CLI
+	var c common.CLI
 	var err error
 
 	parser, err := kong.New(&c)

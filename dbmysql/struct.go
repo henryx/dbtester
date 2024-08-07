@@ -2,7 +2,7 @@ package dbmysql
 
 import (
 	"database/sql"
-	"dbtest/cli"
+	"dbtest/common"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -71,7 +71,7 @@ func (db *MySQL) clean() {
 	_ = tx.Commit()
 }
 
-func (db *MySQL) New(cli *cli.CLI) {
+func (db *MySQL) New(cli *common.CLI) {
 	var err error
 
 	db.host = cli.MySQL.Host

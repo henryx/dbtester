@@ -2,7 +2,7 @@ package dbes
 
 import (
 	"bytes"
-	"dbtest/cli"
+	"dbtest/common"
 	"fmt"
 	"io"
 	"net/http"
@@ -60,7 +60,7 @@ func (e *Elasticsearch) create() {
 	e.call("PUT", fmt.Sprintf("http://%s:%d/%s", e.host, e.port, e.index), bytes.NewBuffer([]byte(mapping)))
 }
 
-func (e *Elasticsearch) New(cli *cli.CLI) {
+func (e *Elasticsearch) New(cli *common.CLI) {
 	e.host = cli.Elasticsearch.Host
 	e.port = cli.Elasticsearch.Port
 	e.index = cli.Elasticsearch.Index

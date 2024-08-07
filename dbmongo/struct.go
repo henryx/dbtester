@@ -2,7 +2,7 @@ package dbmongo
 
 import (
 	"context"
-	"dbtest/cli"
+	"dbtest/common"
 	"fmt"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -21,7 +21,7 @@ func (m *Mongo) clean() {
 
 }
 
-func (m *Mongo) New(cli *cli.CLI) {
+func (m *Mongo) New(cli *common.CLI) {
 	var err error
 
 	host := cli.MongoDB.Host

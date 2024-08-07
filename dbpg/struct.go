@@ -2,7 +2,7 @@ package dbpg
 
 import (
 	"database/sql"
-	"dbtest/cli"
+	"dbtest/common"
 	"fmt"
 	_ "github.com/lib/pq"
 )
@@ -69,7 +69,7 @@ func (db *Postgres) clean() {
 	_ = tx.Commit()
 }
 
-func (db *Postgres) New(cli *cli.CLI) {
+func (db *Postgres) New(cli *common.CLI) {
 	var err error
 
 	db.host = cli.Postgres.Host

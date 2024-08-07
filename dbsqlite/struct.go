@@ -2,7 +2,7 @@ package dbsqlite
 
 import (
 	"database/sql"
-	"dbtest/cli"
+	"dbtest/common"
 	"fmt"
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -68,7 +68,7 @@ func (db *SQLite) clean() {
 	_ = tx.Commit()
 }
 
-func (db *SQLite) New(cli *cli.CLI) {
+func (db *SQLite) New(cli *common.CLI) {
 	var err error
 
 	db.database = cli.SQLite.Database

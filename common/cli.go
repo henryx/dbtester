@@ -1,4 +1,4 @@
-package cli
+package common
 
 type CLI struct {
 	Rows     int    `help:"Number of processed rows" default:"1000000"  short:"r"`
