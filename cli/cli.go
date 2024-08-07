@@ -31,14 +31,6 @@ type CLI struct {
 		// Password string `help:"Set the password" short:"W"`
 		Database string `help:"Set the database name"  short:"D"`
 	} `cmd:"" help:"Execute MongoDB tests" name:"mongo"`
-	CouchDB struct {
-		Host     string `help:"Set the hostname"  short:"H" default:"localhost"`
-		Port     int    `help:"Set listening port"  short:"P" default:"5984"`
-		User     string `help:"Set the username" short:"U"`
-		Password string `help:"Set the password" short:"W"`
-		Database string `help:"Set the database name"  short:"D"`
-	} `cmd:"" help:"Execute CouchDB tests" name:"couchdb"`
-
 	SQLite struct {
 		Database string `help:"Set the database name"  short:"D"`
 	} `cmd:"" help:"Execute SQLite tests" name:"sqlite"`

@@ -2,7 +2,6 @@ package main
 
 import (
 	"dbtest/cli"
-	"dbtest/dbcouch"
 	"dbtest/dbes"
 	"dbtest/dbmongo"
 	"dbtest/dbmysql"
@@ -41,8 +40,6 @@ func test(dbtype string, cli *cli.CLI) {
 		test = &dbmysql.MySQL{}
 	case "elasticsearch":
 		test = &dbes.Elasticsearch{}
-	case "couchdb":
-		test = &dbcouch.CouchDB{}
 	case "sqlite":
 		test = &dbsqlite.SQLite{}
 	default:
