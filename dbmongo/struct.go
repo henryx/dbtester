@@ -40,7 +40,10 @@ func (m *Mongo) New(cli *cli.CLI) {
 	}
 
 	m.collection = m.client.Database(database).Collection("json_data")
-	m.clean()
+
+	if cli.Init {
+		m.clean()
+	}
 }
 
 func (m *Mongo) Close() {

@@ -67,7 +67,9 @@ func (e *Elasticsearch) New(cli *cli.CLI) {
 	e.shards = cli.Elasticsearch.Shards
 	e.replicas = cli.Elasticsearch.Replicas
 
-	e.clean()
+	if cli.Init {
+		e.clean()
+	}
 	e.create()
 }
 

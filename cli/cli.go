@@ -2,7 +2,8 @@ package cli
 
 type CLI struct {
 	Rows     int    `help:"Number of processed rows" default:"1000000"  short:"r"`
-	Datafile string `help:"Name of the datafile containing JSON data"  short:"d" required:""`
+	Init     bool   `help:"Initialize and load data into database" group:"load" short:"i" `
+	Datafile string `help:"Name of the datafile containing JSON data" group:"load" short:"d"`
 	Postgres struct {
 		Host     string `help:"Set the hostname"  short:"H" default:"localhost"`
 		Port     int    `help:"Set listening port"  short:"P" default:"5432"`

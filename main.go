@@ -8,6 +8,7 @@ import (
 	"dbtest/dbpg"
 	"dbtest/dbsqlite"
 	"log"
+	"os"
 	"time"
 
 	"github.com/alecthomas/kong"
@@ -24,7 +25,7 @@ type Test interface {
 	Url() string
 }
 
-func test(dbtype string, cli *cli.CLI) {
+func test(dbtype string, c *cli.CLI) {
 	var test Test
 	var start, end time.Time
 	var duration time.Duration
@@ -46,18 +47,26 @@ func test(dbtype string, cli *cli.CLI) {
 		panic("Database not supported: " + dbtype)
 	}
 
-	test.New(cli)
+	test.New(c)
 	defer test.Close()
 
-	rows := cli.Rows
-	datafile := cli.Datafile
+	rows := c.Rows
+	datafile := c.Datafile
 
-	log.Println("Started load data on", test.Name(), "database (host", test.Url()+")")
-	start = time.Now()
-	test.Load(rows, datafile)
-	end = time.Now()
-	duration = end.Sub(start)
-	log.Println("Finished load after", duration)
+	if c.Init {
+		if c.Datafile == "" {
+			panic("No datafile specified")
+		}
+
+		log.Println("Start load data on", test.Name(), "database (host", test.Url()+")")
+		start = time.Now()
+		test.Load(rows, datafile)
+		end = time.Now()
+		duration = end.Sub(start)
+		log.Println("Finish load after", duration)
+	} else {
+		log.Println("Skipped load JSON data to database")
+	}
 
 	time.Sleep(5 * time.Second)
 	log.Println()
@@ -65,10 +74,10 @@ func test(dbtype string, cli *cli.CLI) {
 	log.Println("------------------")
 	log.Println("Start count without index")
 	start = time.Now()
-	c := test.CountJSON()
+	n := test.CountJSON()
 	end = time.Now()
 	duration = end.Sub(start)
-	log.Printf("Counted %d items in %s", c, duration)
+	log.Printf("Counted %d items in %s", n, duration)
 
 	time.Sleep(5 * time.Second)
 	log.Println()
@@ -76,10 +85,10 @@ func test(dbtype string, cli *cli.CLI) {
 	log.Println("------------------")
 	log.Println("Start find without index")
 	start = time.Now()
-	c = test.FindJSON()
+	n = test.FindJSON()
 	end = time.Now()
 	duration = end.Sub(start)
-	log.Printf("Found %d items without index in %s", c, duration)
+	log.Printf("Found %d items without index in %s", n, duration)
 
 	time.Sleep(5 * time.Second)
 	log.Println()
@@ -90,7 +99,7 @@ func test(dbtype string, cli *cli.CLI) {
 	test.IndexJSON()
 	end = time.Now()
 	duration = end.Sub(start)
-	log.Printf("Indexed field in %s", duration)
+	log.Printf("Index field finished in %s", duration)
 
 	time.Sleep(5 * time.Second)
 	log.Println()
@@ -98,16 +107,25 @@ func test(dbtype string, cli *cli.CLI) {
 	log.Println("------------------")
 	log.Println("Start find with index")
 	start = time.Now()
-	c = test.FindJSON()
+	n = test.FindJSON()
 	end = time.Now()
 	duration = end.Sub(start)
-	log.Printf("Found %d items using index in %s", c, duration)
+	log.Printf("Found %d items using index in %s", n, duration)
 }
 
 func main() {
-	var cli cli.CLI
+	var c cli.CLI
+	var err error
 
-	ctx := kong.Parse(&cli)
+	parser, err := kong.New(&c)
+	if err != nil {
+		panic(err)
+	}
 
-	test(ctx.Command(), &cli)
+	ctx, err := parser.Parse(os.Args[1:])
+	if err != nil {
+		panic(err)
+	}
+
+	test(ctx.Command(), &c)
 }

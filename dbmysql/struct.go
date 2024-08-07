@@ -86,7 +86,9 @@ func (db *MySQL) New(cli *cli.CLI) {
 		panic("Cannot open database connection: " + err.Error())
 	}
 
-	db.clean()
+	if cli.Init {
+		db.clean()
+	}
 	db.createDB()
 	db.createTable()
 }
