@@ -82,4 +82,5 @@ func (db *SQLite) Load(size int, filename string) {
 	}
 
 	db.loadJSON(size, filename)
+	db.loadSchema()
 }
