@@ -10,6 +10,7 @@ import (
 type SQLite struct {
 	conn     *sql.DB
 	database string
+	init     bool
 }
 
 func (db *SQLite) create() {
@@ -72,6 +73,7 @@ func (db *SQLite) New(cli *common.CLI) {
 	var err error
 
 	db.database = cli.SQLite.Database
+	db.init = cli.Init
 
 	dsn := fmt.Sprintf("file:%s?_journal=WAL&_fk=true", db.database)
 	db.conn, err = sql.Open("sqlite3", dsn)
@@ -80,7 +82,7 @@ func (db *SQLite) New(cli *common.CLI) {
 		panic("Cannot open database connection: " + err.Error())
 	}
 
-	if cli.Init {
+	if db.init {
 		db.clean()
 	}
 	db.create()

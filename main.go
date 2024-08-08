@@ -53,20 +53,12 @@ func test(dbtype string, c *common.CLI) {
 	rows := c.Rows
 	datafile := c.Datafile
 
-	if c.Init {
-		if c.Datafile == "" {
-			panic("No datafile specified")
-		}
-
-		log.Println("Start load data on", test.Name(), "database (host", test.Url()+")")
-		start = time.Now()
-		test.Load(rows, datafile)
-		end = time.Now()
-		duration = end.Sub(start)
-		log.Println("Finish load after", duration)
-	} else {
-		log.Println("Skipped load JSON data to database")
-	}
+	log.Println("Start load data on", test.Name(), "database (host", test.Url()+")")
+	start = time.Now()
+	test.Load(rows, datafile)
+	end = time.Now()
+	duration = end.Sub(start)
+	log.Println("Finish load after", duration)
 
 	time.Sleep(5 * time.Second)
 	log.Println()
