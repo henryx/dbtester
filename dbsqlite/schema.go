@@ -48,6 +48,7 @@ func (db *SQLite) addEdition(tx *sql.Tx, j string) {
 	publishDate := gjson.Get(j, "publish_date")
 	edition := gjson.Get(j, "edition_name")
 	publishers := gjson.Get(j, "publishers")
+	genres := gjson.Get(j, "genres")
 	desc := gjson.Get(j, "description")
 
 	description := ""
@@ -71,6 +72,9 @@ func (db *SQLite) addEdition(tx *sql.Tx, j string) {
 
 	publishersIds := db.getPublishers(tx, publishers.Array())
 	db.addEditionPublishers(tx, editionId, publishersIds)
+
+	genresIds := db.getGenres(tx, genres.Array())
+	db.addEditionGenres(tx, editionId, genresIds)
 }
 
 func (db *SQLite) addEditionPublishers(tx *sql.Tx, editionId int, publishers []int) {
@@ -88,6 +92,25 @@ func (db *SQLite) addEditionPublishers(tx *sql.Tx, editionId int, publishers []i
 		_, err := stmt.Exec(editionId, publisher)
 		if err != nil {
 			panic("Cannot insert publishers/editions relation: " + err.Error())
+		}
+	}
+}
+
+func (db *SQLite) addEditionGenres(tx *sql.Tx, editionId int, genres []int) {
+	var err error
+
+	insert := "INSERT INTO editions_genres(edition_id, genre_id) VALUES(?, ?)"
+
+	stmt, err := tx.Prepare(insert)
+	if err != nil {
+		panic("Cannot create statement: " + err.Error())
+	}
+	defer stmt.Close()
+
+	for _, genre := range genres {
+		_, err := stmt.Exec(editionId, genre)
+		if err != nil {
+			panic("Cannot insert genres/editions relation: " + err.Error())
 		}
 	}
 }
@@ -148,6 +171,39 @@ func (db *SQLite) getPublishers(tx *sql.Tx, publishers []gjson.Result) []int {
 	return res
 }
 
+func (db *SQLite) getGenres(tx *sql.Tx, genres []gjson.Result) []int {
+	var genreId int
+
+	res := make([]int, 0)
+	query := "SELECT id FROM genres WHERE name = ?"
+
+	for _, genre := range genres {
+		err := tx.QueryRow(query, genre.String()).Scan(&genreId)
+		if !errors.Is(err, sql.ErrNoRows) {
+			if err != nil {
+				panic("Cannot get genres: " + err.Error())
+			}
+		}
+
+		if genreId == 0 {
+			insert := "INSERT INTO genres(name) VALUES (?) RETURNING id"
+			stmt, err := tx.Prepare(insert)
+			if err != nil {
+				return nil
+			}
+
+			err = stmt.QueryRow(genre.String()).Scan(&genreId)
+			if err != nil {
+				return nil
+			}
+
+			_ = stmt.Close()
+		}
+		res = append(res, genreId)
+	}
+	return res
+}
+
 func (db *SQLite) loadAuthors(tx *sql.Tx) {
 	var err error
 
@@ -190,18 +246,12 @@ func (db *SQLite) loadEditions(tx *sql.Tx) {
 			panic("Cannot read value: " + err.Error())
 		}
 		db.addEdition(tx, j)
-
-		err = tx.Commit()
-		if err != nil {
-			panic("Cannot commit transaction: " + err.Error())
-		}
 	}
 }
 
 func (db *SQLite) loadSchema() {
 	var tx *sql.Tx
 	var err error
-
 	tx, err = db.conn.Begin()
 	if err != nil {
 		panic("Cannot open transaction: " + err.Error())
