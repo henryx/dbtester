@@ -49,6 +49,7 @@ func (db *SQLite) addEdition(tx *sql.Tx, j string) {
 	edition := gjson.Get(j, "edition_name")
 	publishers := gjson.Get(j, "publishers")
 	genres := gjson.Get(j, "genres")
+	authors := gjson.Get(j, "authors")
 	desc := gjson.Get(j, "description")
 
 	description := ""
@@ -75,6 +76,14 @@ func (db *SQLite) addEdition(tx *sql.Tx, j string) {
 
 	genresIds := db.getGenres(tx, genres.Array())
 	db.addEditionGenres(tx, editionId, genresIds)
+
+	authorsIds := db.getAuthors(tx, authors.Array())
+	db.addEditionAuthors(tx, editionId, authorsIds)
+	// TODO: save ISBNs
+}
+
+func (db *SQLite) addEditionAuthors(tx *sql.Tx, editionId int, authors []int) {
+	// TODO: add authors
 }
 
 func (db *SQLite) addEditionPublishers(tx *sql.Tx, editionId int, publishers []int) {
@@ -137,6 +146,37 @@ func (db *SQLite) addAuthor(tx *sql.Tx, j string) {
 	if err != nil {
 		panic("Cannot execute query: " + err.Error())
 	}
+}
+
+func (db *SQLite) getAuthors(tx *sql.Tx, authors []gjson.Result) []int {
+	var err error
+	var authorId int
+
+	res := make([]int, 0)
+	query := "SELECT id FROM authors WHERE key = ?"
+
+	for _, author := range authors {
+		var key string
+		switch author.Type {
+		case gjson.Null:
+			continue
+		case gjson.String:
+			key = author.String()
+		case gjson.JSON:
+			key = gjson.Get(author.Raw, "key").String()
+		}
+
+		err = tx.QueryRow(query, key).Scan(&authorId)
+		if err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				continue
+			}
+			panic("Cannot get author: " + err.Error())
+		}
+
+		res = append(res, authorId)
+	}
+	return res
 }
 
 func (db *SQLite) getPublishers(tx *sql.Tx, publishers []gjson.Result) []int {
@@ -252,6 +292,7 @@ func (db *SQLite) loadEditions(tx *sql.Tx) {
 func (db *SQLite) loadSchema() {
 	var tx *sql.Tx
 	var err error
+
 	tx, err = db.conn.Begin()
 	if err != nil {
 		panic("Cannot open transaction: " + err.Error())
