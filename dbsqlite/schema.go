@@ -51,6 +51,8 @@ func (db *SQLite) addEdition(tx *sql.Tx, j string) {
 	genres := gjson.Get(j, "genres")
 	authors := gjson.Get(j, "authors")
 	desc := gjson.Get(j, "description")
+	isbn10s := gjson.Get(j, "isbn10")
+	isbn13s := gjson.Get(j, "isbn13")
 
 	description := ""
 	switch desc.Type {
@@ -79,7 +81,41 @@ func (db *SQLite) addEdition(tx *sql.Tx, j string) {
 
 	authorsIds := db.getAuthors(tx, authors.Array())
 	db.addEditionAuthors(tx, editionId, authorsIds)
-	// TODO: save ISBNs
+
+	db.addISBNs(tx, editionId, isbn10s.Array(), isbn13s.Array())
+}
+
+func (db SQLite) addISBNs(tx *sql.Tx, editionId int, isbn10s []gjson.Result, isbn13s []gjson.Result) {
+	var err error
+
+	ins_isbn10 := "INSERT INTO editions_isbn10 (edition_id, isbn10) VALUES (?, ?)"
+	ins_isbn13 := "INSERT INTO editions_isbn13 (edition_id, isbn13) VALUES (?, ?)"
+
+	stmt_isbn10, err := tx.Prepare(ins_isbn10)
+	if err != nil {
+		panic("Cannot create statement: " + err.Error())
+	}
+	defer stmt_isbn10.Close()
+
+	stmt_isbn13, err := tx.Prepare(ins_isbn13)
+	if err != nil {
+		panic("Cannot create statement: " + err.Error())
+	}
+	defer stmt_isbn13.Close()
+
+	for _, isbn10 := range isbn10s {
+		_, err := stmt_isbn10.Exec(editionId, isbn10.String())
+		if err != nil {
+			panic("Cannot insert ISBN10/editions relation: " + err.Error())
+		}
+	}
+
+	for _, isbn13 := range isbn13s {
+		_, err := stmt_isbn13.Exec(editionId, isbn13.String())
+		if err != nil {
+			panic("Cannot insert ISBN13/editions relation: " + err.Error())
+		}
+	}
 }
 
 func (db *SQLite) addEditionAuthors(tx *sql.Tx, editionId int, authors []int) {
