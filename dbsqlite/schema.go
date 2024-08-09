@@ -83,7 +83,22 @@ func (db *SQLite) addEdition(tx *sql.Tx, j string) {
 }
 
 func (db *SQLite) addEditionAuthors(tx *sql.Tx, editionId int, authors []int) {
-	// TODO: add authors
+	var err error
+
+	insert := "INSERT INTO editions_authors(edition_id, author_id) VALUES(?, ?)"
+
+	stmt, err := tx.Prepare(insert)
+	if err != nil {
+		panic("Cannot create statement: " + err.Error())
+	}
+	defer stmt.Close()
+
+	for _, author := range authors {
+		_, err := stmt.Exec(editionId, author)
+		if err != nil {
+			panic("Cannot insert authors/editions relation: " + err.Error())
+		}
+	}
 }
 
 func (db *SQLite) addEditionPublishers(tx *sql.Tx, editionId int, publishers []int) {
