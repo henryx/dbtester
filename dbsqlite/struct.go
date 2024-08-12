@@ -8,9 +8,18 @@ import (
 )
 
 type SQLite struct {
-	conn     *sql.DB
-	database string
-	init     bool
+	conn                  *sql.DB
+	database              string
+	init                  bool
+	stmtAuthors           *sql.Stmt
+	stmtEditions          *sql.Stmt
+	stmtPublishers        *sql.Stmt
+	stmtGenres            *sql.Stmt
+	stmtIsbn10            *sql.Stmt
+	stmtIsbn13            *sql.Stmt
+	stmtEditionAuthors    *sql.Stmt
+	stmtEditionPublishers *sql.Stmt
+	stmtEditionGenres     *sql.Stmt
 }
 
 func (db *SQLite) create() {
