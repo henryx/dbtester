@@ -11,6 +11,7 @@ type Postgres struct {
 	conn     *sql.DB
 	host     string
 	database string
+	init     bool
 }
 
 func (db *Postgres) create() {
@@ -73,10 +74,12 @@ func (db *Postgres) New(cli *common.CLI) {
 	var err error
 
 	db.host = cli.Postgres.Host
+	db.database = cli.Postgres.Database
+	db.init = cli.Init
+
 	port := cli.Postgres.Port
 	user := cli.Postgres.User
 	password := cli.Postgres.Password
-	db.database = cli.Postgres.Database
 
 	dsn := fmt.Sprintf("user=%s password=%s dbname=%s host=%s port=%d sslmode=disable", user, password, db.database, db.host, port)
 	db.conn, err = sql.Open("postgres", dsn)
@@ -84,7 +87,7 @@ func (db *Postgres) New(cli *common.CLI) {
 		panic("Cannot open database connection: " + err.Error())
 	}
 
-	if cli.Init {
+	if db.init {
 		db.clean()
 	}
 	db.create()
