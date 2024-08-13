@@ -12,7 +12,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func (m *Mongo) Load(size int, filename string) {
+func (m *Mongo) Load(filename string) {
 	//var j map[string]interface{}
 	var j interface{}
 
@@ -67,7 +67,7 @@ func (m *Mongo) Load(size int, filename string) {
 			}
 
 			counter++
-			if counter == size {
+			if counter == m.size {
 				counter = 0
 				err = session.CommitTransaction(ctx)
 				if err != nil {

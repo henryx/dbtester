@@ -9,6 +9,7 @@ import (
 )
 
 type Elasticsearch struct {
+	size     int
 	host     string
 	port     int
 	index    string
@@ -61,6 +62,7 @@ func (e *Elasticsearch) create() {
 }
 
 func (e *Elasticsearch) New(cli *common.CLI) {
+	e.size = cli.Rows
 	e.host = cli.Elasticsearch.Host
 	e.port = cli.Elasticsearch.Port
 	e.index = cli.Elasticsearch.Index

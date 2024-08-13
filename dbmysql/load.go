@@ -27,7 +27,7 @@ func (a *Items) Scan(value interface{}) error {
 	return json.Unmarshal(b, &a)
 }
 
-func (db *MySQL) Load(size int, filename string) {
+func (db *MySQL) Load(filename string) {
 	/* j := Items{} */
 	var tx *sql.Tx
 	var insert string = fmt.Sprintf("INSERT INTO %s.json_data(data) VALUES (?)", db.database)
@@ -74,7 +74,7 @@ func (db *MySQL) Load(size int, filename string) {
 		}
 
 		counter++
-		if counter == size {
+		if counter == db.size {
 			counter = 0
 			err = tx.Commit()
 			if err != nil {

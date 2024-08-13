@@ -18,7 +18,7 @@ type Test interface {
 	Name() string
 	New(cli *common.CLI)
 	Close()
-	Load(size int, filename string)
+	Load(filename string)
 	CountJSON() int64
 	IndexJSON()
 	FindJSON() int64
@@ -50,12 +50,11 @@ func test(dbtype string, c *common.CLI) {
 	test.New(c)
 	defer test.Close()
 
-	rows := c.Rows
 	datafile := c.Datafile
 
 	log.Println("Start load data on", test.Name(), "database (host", test.Url()+")")
 	start = time.Now()
-	test.Load(rows, datafile)
+	test.Load(datafile)
 	end = time.Now()
 	duration = end.Sub(start)
 	log.Println("Finish load after", duration)

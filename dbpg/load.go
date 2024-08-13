@@ -2,8 +2,7 @@ package dbpg
 
 import "log"
 
-func (db *Postgres) Load(size int, filename string) {
-
+func (db *Postgres) Load(filename string) {
 	if !db.init {
 		log.Println("Skipped load JSON data to database")
 		return
@@ -13,5 +12,6 @@ func (db *Postgres) Load(size int, filename string) {
 		panic("No datafile specified")
 	}
 
-	db.loadJSON(size, filename)
+	db.loadJSON(db.size, filename)
+	db.loadSchema()
 }

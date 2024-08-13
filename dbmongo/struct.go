@@ -10,6 +10,7 @@ import (
 )
 
 type Mongo struct {
+	size       int
 	client     *mongo.Client
 	collection *mongo.Collection
 	url        string
@@ -23,6 +24,8 @@ func (m *Mongo) clean() {
 
 func (m *Mongo) New(cli *common.CLI) {
 	var err error
+
+	m.size = cli.Rows
 
 	host := cli.MongoDB.Host
 	port := cli.MongoDB.Port

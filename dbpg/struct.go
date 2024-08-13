@@ -8,6 +8,7 @@ import (
 )
 
 type Postgres struct {
+	size     int
 	conn     *sql.DB
 	host     string
 	database string
@@ -72,6 +73,8 @@ func (db *Postgres) clean() {
 
 func (db *Postgres) New(cli *common.CLI) {
 	var err error
+
+	db.size = cli.Rows
 
 	db.host = cli.Postgres.Host
 	db.database = cli.Postgres.Database

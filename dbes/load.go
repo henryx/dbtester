@@ -27,7 +27,7 @@ func (e *Elasticsearch) save(buf string) {
 	}
 }
 
-func (e *Elasticsearch) Load(size int, filename string) {
+func (e *Elasticsearch) Load(filename string) {
 	var err error
 	var buf strings.Builder
 
@@ -66,7 +66,7 @@ func (e *Elasticsearch) Load(size int, filename string) {
 		buf.WriteString("\n")
 		buf.WriteString(line)
 
-		if counter == size {
+		if counter == e.size {
 			e.save(buf.String())
 			commit++
 			log.Printf("Committed %d...\n", commit)

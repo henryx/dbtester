@@ -8,6 +8,7 @@ import (
 )
 
 type SQLite struct {
+	size                  int
 	conn                  *sql.DB
 	database              string
 	init                  bool
@@ -83,6 +84,7 @@ func (db *SQLite) New(cli *common.CLI) {
 
 	db.database = cli.SQLite.Database
 	db.init = cli.Init
+	db.size = cli.Rows
 
 	dsn := fmt.Sprintf("file:%s?_journal=WAL&_fk=true", db.database)
 	db.conn, err = sql.Open("sqlite3", dsn)

@@ -2,7 +2,8 @@ package dbsqlite
 
 import "log"
 
-func (db *SQLite) Load(size int, filename string) {
+func (db *SQLite) Load(filename string) {
+
 	if !db.init {
 		log.Println("Skipped load JSON data to database")
 		return
@@ -12,6 +13,6 @@ func (db *SQLite) Load(size int, filename string) {
 		panic("No datafile specified")
 	}
 
-	db.loadJSON(size, filename)
+	db.loadJSON(db.size, filename)
 	db.loadSchema()
 }
