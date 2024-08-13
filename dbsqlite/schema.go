@@ -51,8 +51,8 @@ func (db *SQLite) addEdition(tx *sql.Tx, j string) {
 	genres := gjson.Get(j, "genres")
 	authors := gjson.Get(j, "authors")
 	desc := gjson.Get(j, "description")
-	isbn10s := gjson.Get(j, "isbn10")
-	isbn13s := gjson.Get(j, "isbn13")
+	isbn10s := gjson.Get(j, "isbn_10")
+	isbn13s := gjson.Get(j, "isbn_13")
 
 	description := ""
 	switch desc.Type {
