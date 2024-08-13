@@ -41,16 +41,16 @@ func (db *Postgres) create() {
 
 func (db *Postgres) clean() {
 	tables := []string{
-		"DROP TABLE IF EXISTS json_data",
-		"DROP TABLE IF EXISTS editions_authors",
-		"DROP TABLE IF EXISTS editions_isbn13",
-		"DROP TABLE IF EXISTS editions_isbn10",
-		"DROP TABLE IF EXISTS editions_publishers",
-		"DROP TABLE IF EXISTS editions_genres",
-		"DROP TABLE IF EXISTS publishers",
-		"DROP TABLE IF EXISTS genres",
-		"DROP TABLE IF EXISTS editions",
-		"DROP TABLE IF EXISTS authors",
+		"DROP TABLE IF EXISTS json_data CASCADE",
+		"DROP TABLE IF EXISTS editions_authors CASCADE",
+		"DROP TABLE IF EXISTS editions_isbn13 CASCADE",
+		"DROP TABLE IF EXISTS editions_isbn10 CASCADE",
+		"DROP TABLE IF EXISTS editions_publishers CASCADE",
+		"DROP TABLE IF EXISTS editions_genres CASCADE",
+		"DROP TABLE IF EXISTS publishers CASCADE",
+		"DROP TABLE IF EXISTS genres CASCADE",
+		"DROP TABLE IF EXISTS editions CASCADE",
+		"DROP TABLE IF EXISTS authors CASCADE",
 	}
 
 	tx, err := db.conn.Begin()
