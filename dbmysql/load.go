@@ -74,7 +74,7 @@ func (db *MySQL) Load(filename string) {
 		}
 
 		counter++
-		if counter == db.size {
+		if counter == db.rows {
 			counter = 0
 			err = tx.Commit()
 			if err != nil {

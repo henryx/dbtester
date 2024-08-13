@@ -66,7 +66,7 @@ func (e *Elasticsearch) Load(filename string) {
 		buf.WriteString("\n")
 		buf.WriteString(line)
 
-		if counter == e.size {
+		if counter == e.rows {
 			e.save(buf.String())
 			commit++
 			log.Printf("Committed %d...\n", commit)

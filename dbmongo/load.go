@@ -67,7 +67,7 @@ func (m *Mongo) Load(filename string) {
 			}
 
 			counter++
-			if counter == m.size {
+			if counter == m.rows {
 				counter = 0
 				err = session.CommitTransaction(ctx)
 				if err != nil {

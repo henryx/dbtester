@@ -13,6 +13,6 @@ func (db *SQLite) Load(filename string) {
 		panic("No datafile specified")
 	}
 
-	db.loadJSON(db.size, filename)
+	db.loadJSON(db.rows, filename)
 	db.loadSchema()
 }

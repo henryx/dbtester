@@ -8,7 +8,7 @@ import (
 )
 
 type MySQL struct {
-	size     int
+	rows     int
 	conn     *sql.DB
 	host     string
 	database string
@@ -75,7 +75,7 @@ func (db *MySQL) clean() {
 func (db *MySQL) New(cli *common.CLI) {
 	var err error
 
-	db.size = cli.Rows
+	db.rows = cli.Rows
 
 	db.host = cli.MySQL.Host
 	port := cli.MySQL.Port
