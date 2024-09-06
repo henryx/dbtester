@@ -82,7 +82,7 @@ func (db *SQLite) addEdition(tx *sql.Tx, j string) {
 	db.addISBNs(editionId, isbn10s.Array(), isbn13s.Array())
 }
 
-func (db SQLite) addISBNs(editionId int, isbn10s []gjson.Result, isbn13s []gjson.Result) {
+func (db *SQLite) addISBNs(editionId int, isbn10s []gjson.Result, isbn13s []gjson.Result) {
 	var err error
 
 	for _, isbn10 := range isbn10s {
