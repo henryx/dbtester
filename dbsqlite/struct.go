@@ -8,19 +8,21 @@ import (
 )
 
 type SQLite struct {
-	rows                  int
-	conn                  *sql.DB
-	database              string
-	init                  bool
-	stmtAuthors           *sql.Stmt
-	stmtEditions          *sql.Stmt
-	stmtPublishers        *sql.Stmt
-	stmtGenres            *sql.Stmt
-	stmtIsbn10            *sql.Stmt
-	stmtIsbn13            *sql.Stmt
-	stmtEditionAuthors    *sql.Stmt
-	stmtEditionPublishers *sql.Stmt
-	stmtEditionGenres     *sql.Stmt
+	rows     int
+	conn     *sql.DB
+	database string
+	init     bool
+	stmts    struct {
+		authors           *sql.Stmt
+		editions          *sql.Stmt
+		publishers        *sql.Stmt
+		genres            *sql.Stmt
+		isbn10            *sql.Stmt
+		isbn13            *sql.Stmt
+		editionAuthors    *sql.Stmt
+		editionPublishers *sql.Stmt
+		editionGenres     *sql.Stmt
+	}
 }
 
 func (db *SQLite) create() {

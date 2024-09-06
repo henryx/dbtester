@@ -64,7 +64,7 @@ func (db *SQLite) addEdition(tx *sql.Tx, j string) {
 
 	pages := gjson.Get(j, "number_of_pages")
 
-	err = db.stmtEditions.QueryRow(key.String(), title.String(), nullString(subtitle), nullString(format),
+	err = db.stmts.editions.QueryRow(key.String(), title.String(), nullString(subtitle), nullString(format),
 		nullString(publishDate), nullString(edition), description, nullString(pages)).Scan(&editionId)
 	if err != nil {
 		log.Println(err)
@@ -86,14 +86,14 @@ func (db *SQLite) addISBNs(editionId int, isbn10s []gjson.Result, isbn13s []gjso
 	var err error
 
 	for _, isbn10 := range isbn10s {
-		_, err = db.stmtIsbn10.Exec(editionId, isbn10.String())
+		_, err = db.stmts.isbn10.Exec(editionId, isbn10.String())
 		if err != nil {
 			panic("Cannot insert ISBN10/editions relation: " + err.Error())
 		}
 	}
 
 	for _, isbn13 := range isbn13s {
-		_, err = db.stmtIsbn13.Exec(editionId, isbn13.String())
+		_, err = db.stmts.isbn13.Exec(editionId, isbn13.String())
 		if err != nil {
 			panic("Cannot insert ISBN13/editions relation: " + err.Error())
 		}
@@ -104,7 +104,7 @@ func (db *SQLite) addEditionAuthors(editionId int, authors []int) {
 	var err error
 
 	for _, author := range authors {
-		_, err = db.stmtEditionAuthors.Exec(editionId, author)
+		_, err = db.stmts.editionAuthors.Exec(editionId, author)
 		if err != nil {
 			panic("Cannot insert authors/editions relation: " + err.Error())
 		}
@@ -115,7 +115,7 @@ func (db *SQLite) addEditionPublishers(editionId int, publishers []int) {
 	var err error
 
 	for _, publisher := range publishers {
-		_, err = db.stmtEditionPublishers.Exec(editionId, publisher)
+		_, err = db.stmts.editionPublishers.Exec(editionId, publisher)
 		if err != nil {
 			panic("Cannot insert publishers/editions relation: " + err.Error())
 		}
@@ -126,7 +126,7 @@ func (db *SQLite) addEditionGenres(editionId int, genres []int) {
 	var err error
 
 	for _, genre := range genres {
-		_, err = db.stmtEditionGenres.Exec(editionId, genre)
+		_, err = db.stmts.editionGenres.Exec(editionId, genre)
 		if err != nil {
 			panic("Cannot insert genres/editions relation: " + err.Error())
 		}
@@ -150,7 +150,7 @@ func (db *SQLite) addAuthor(j string) {
 	birth := gjson.Get(j, "birth_date")
 	death := gjson.Get(j, "death_date")
 
-	_, err = db.stmtAuthors.Exec(key.String(), name.String(), revision.Int(), nullInt(birth), nullInt(death))
+	_, err = db.stmts.authors.Exec(key.String(), name.String(), revision.Int(), nullInt(birth), nullInt(death))
 	if err != nil {
 		panic("Cannot execute query: " + err.Error())
 	}
@@ -202,7 +202,7 @@ func (db *SQLite) getPublishers(tx *sql.Tx, publishers []gjson.Result) []int {
 		}
 
 		if publisherId == 0 {
-			err = db.stmtPublishers.QueryRow(publisher.String()).Scan(&publisherId)
+			err = db.stmts.publishers.QueryRow(publisher.String()).Scan(&publisherId)
 			if err != nil {
 				return nil
 			}
@@ -227,7 +227,7 @@ func (db *SQLite) getGenres(tx *sql.Tx, genres []gjson.Result) []int {
 		}
 
 		if genreId == 0 {
-			err = db.stmtGenres.QueryRow(genre.String()).Scan(&genreId)
+			err = db.stmts.genres.QueryRow(genre.String()).Scan(&genreId)
 			if err != nil {
 				return nil
 			}
@@ -295,61 +295,61 @@ func (db *SQLite) prepareStatements(tx *sql.Tx) {
 	insEditionPublishers := "INSERT INTO editions_publishers(edition_id, publisher_id) VALUES(?, ?)"
 	insEditionGenres := "INSERT INTO editions_genres(edition_id, genre_id) VALUES(?, ?)"
 
-	db.stmtAuthors, err = tx.Prepare(insAuthors)
+	db.stmts.authors, err = tx.Prepare(insAuthors)
 	if err != nil {
 		panic("Cannot create statement: " + err.Error())
 	}
 
-	db.stmtEditions, err = tx.Prepare(insEditions)
+	db.stmts.editions, err = tx.Prepare(insEditions)
 	if err != nil {
 		panic("Cannot create statement: " + err.Error())
 	}
 
-	db.stmtPublishers, err = tx.Prepare(insPublishers)
+	db.stmts.publishers, err = tx.Prepare(insPublishers)
 	if err != nil {
 		panic("Cannot create statement: " + err.Error())
 	}
 
-	db.stmtGenres, err = tx.Prepare(insGenres)
+	db.stmts.genres, err = tx.Prepare(insGenres)
 	if err != nil {
 		panic("Cannot create statement: " + err.Error())
 	}
 
-	db.stmtIsbn10, err = tx.Prepare(insIsbn10)
+	db.stmts.isbn10, err = tx.Prepare(insIsbn10)
 	if err != nil {
 		panic("Cannot create statement: " + err.Error())
 	}
 
-	db.stmtIsbn13, err = tx.Prepare(insIsbn13)
+	db.stmts.isbn13, err = tx.Prepare(insIsbn13)
 	if err != nil {
 		panic("Cannot create statement: " + err.Error())
 	}
 
-	db.stmtEditionAuthors, err = tx.Prepare(insEditionAuthors)
+	db.stmts.editionAuthors, err = tx.Prepare(insEditionAuthors)
 	if err != nil {
 		panic("Cannot create statement: " + err.Error())
 	}
 
-	db.stmtEditionPublishers, err = tx.Prepare(insEditionPublishers)
+	db.stmts.editionPublishers, err = tx.Prepare(insEditionPublishers)
 	if err != nil {
 		panic("Cannot create statement: " + err.Error())
 	}
 
-	db.stmtEditionGenres, err = tx.Prepare(insEditionGenres)
+	db.stmts.editionGenres, err = tx.Prepare(insEditionGenres)
 	if err != nil {
 		panic("Cannot create statement: " + err.Error())
 	}
 }
 
 func (db *SQLite) closeStatements() {
-	_ = db.stmtAuthors.Close()
-	_ = db.stmtEditions.Close()
-	_ = db.stmtPublishers.Close()
-	_ = db.stmtGenres.Close()
-	_ = db.stmtIsbn10.Close()
-	_ = db.stmtIsbn13.Close()
-	_ = db.stmtEditionAuthors.Close()
-	_ = db.stmtEditionPublishers.Close()
+	_ = db.stmts.authors.Close()
+	_ = db.stmts.editions.Close()
+	_ = db.stmts.publishers.Close()
+	_ = db.stmts.genres.Close()
+	_ = db.stmts.isbn10.Close()
+	_ = db.stmts.isbn13.Close()
+	_ = db.stmts.editionAuthors.Close()
+	_ = db.stmts.editionPublishers.Close()
 }
 
 func (db *SQLite) loadSchema() {
