@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"strings"
 )
 
 func (db *SQLite) loadJSON(size int, filename string) {
@@ -35,12 +36,12 @@ func (db *SQLite) loadJSON(size int, filename string) {
 				break
 			}
 
-			if line == "" {
-				log.Println("Line empty")
-				continue
-			}
-
 			panic("Error when load data: " + err.Error())
+		}
+
+		if strings.Trim(line, "\r\n") == "" {
+			log.Println("Line empty")
+			continue
 		}
 
 		_, err = tx.Exec(insert, line)

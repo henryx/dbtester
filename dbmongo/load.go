@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"strings"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -47,13 +48,14 @@ func (m *Mongo) Load(filename string) {
 					break
 				}
 
-				if line == "" {
-					log.Println("Line empty")
-					continue
-				}
-
 				panic("Error when read line: " + err.Error())
 			}
+
+			if strings.Trim(line, "\r\n") == "" {
+				log.Println("Line empty")
+				continue
+			}
+
 			/* err = json.Unmarshal([]byte(line), &j) */
 			err = bson.UnmarshalExtJSON([]byte(line), true, &j)
 			if err != nil {

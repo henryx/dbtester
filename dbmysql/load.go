@@ -10,6 +10,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"strings"
 )
 
 type Items map[string]interface{}
@@ -55,12 +56,12 @@ func (db *MySQL) Load(filename string) {
 				break
 			}
 
-			if line == "" {
-				log.Println("Line empty")
-				continue
-			}
-
 			panic("Error when load data: " + err.Error())
+		}
+
+		if strings.Trim(line, "\r\n") == "" {
+			log.Println("Line empty")
+			continue
 		}
 
 		/* 		err = j.Scan([]byte(line))

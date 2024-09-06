@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"strings"
 )
 
 func (db *Postgres) loadJSON(size int, filename string) {
@@ -35,13 +36,15 @@ func (db *Postgres) loadJSON(size int, filename string) {
 				break
 			}
 
-			if line == "" {
-				log.Println("Line empty")
-				continue
-			}
-
 			panic("Error when load data: " + err.Error())
 		}
+
+		if strings.Trim(line, "\r\n") == "" {
+			log.Println("Empty line")
+			continue
+		}
+
+		line = strings.Replace(line, "\\u0000", "", -1)
 
 		_, err = tx.Exec(insert, line)
 		if err != nil {

@@ -54,12 +54,14 @@ func (e *Elasticsearch) Load(filename string) {
 				break
 			}
 
-			if line == "" {
-				log.Println("Line empty")
-				continue
-			}
 			panic("Error when load data: " + err.Error())
 		}
+
+		if strings.Trim(line, "\r\n") == "" {
+			log.Println("Line empty")
+			continue
+		}
+
 		counter++
 
 		buf.WriteString(`{ "index" : { } }`)
