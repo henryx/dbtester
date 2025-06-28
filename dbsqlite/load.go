@@ -1,6 +1,8 @@
 package dbsqlite
 
-import "log"
+import (
+	"log"
+)
 
 func (db *SQLite) Load(filename string) {
 
@@ -14,5 +16,8 @@ func (db *SQLite) Load(filename string) {
 	}
 
 	db.loadJSON(db.rows, filename)
-	db.loadSchema()
+
+	if db.transform {
+		db.loadSchema()
+	}
 }
