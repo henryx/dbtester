@@ -5,13 +5,15 @@ import (
 	"dbtest/common"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
+	"log"
 )
 
 type MySQL struct {
-	rows     int
-	conn     *sql.DB
-	host     string
-	database string
+	rows      int
+	conn      *sql.DB
+	host      string
+	database  string
+	transform bool
 }
 
 func (db *MySQL) createTable() {
@@ -82,6 +84,7 @@ func (db *MySQL) New(cli *common.CLI) {
 	user := cli.MySQL.User
 	password := cli.MySQL.Password
 	db.database = cli.MySQL.Database
+	db.transform = cli.Transform
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/mysql", user, password, db.host, port)
 	db.conn, err = sql.Open("mysql", dsn)
@@ -97,7 +100,10 @@ func (db *MySQL) New(cli *common.CLI) {
 }
 
 func (db *MySQL) Close() {
-	db.conn.Close()
+	err := db.conn.Close()
+	if err != nil {
+		log.Fatalf("Cannot close database connection: %s", err.Error())
+	}
 }
 
 func (db *MySQL) Name() string {

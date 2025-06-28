@@ -1,10 +1,11 @@
 package common
 
 type CLI struct {
-	Rows     int    `help:"Number of processed rows" default:"1000000"  short:"r"`
-	Init     bool   `help:"Initialize and load data into database" group:"load" short:"i" `
-	Datafile string `help:"Name of the datafile containing JSON data" group:"load" short:"d"`
-	Postgres struct {
+	Rows      int    `help:"Number of processed rows" default:"1000000"  short:"r"`
+	Init      bool   `help:"Initialize and load data into database" group:"load" short:"i" `
+	Datafile  string `help:"Name of the datafile containing JSON data" group:"load" short:"d"`
+	Transform bool   `help:"Transform JSON data in SQL schema" group:"load" short:"t" default:"false"`
+	Postgres  struct {
 		Host     string `help:"Set the hostname"  short:"H" default:"localhost"`
 		Port     int    `help:"Set listening port"  short:"P" default:"5432"`
 		User     string `help:"Set the database username" short:"U"`

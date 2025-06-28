@@ -5,6 +5,7 @@ import (
 	"dbtest/common"
 	"fmt"
 	_ "github.com/lib/pq"
+	"log"
 )
 
 type Postgres struct {
@@ -13,6 +14,18 @@ type Postgres struct {
 	host     string
 	database string
 	init     bool
+	stmts    struct {
+		authors           *sql.Stmt
+		editions          *sql.Stmt
+		publishers        *sql.Stmt
+		genres            *sql.Stmt
+		isbn10            *sql.Stmt
+		isbn13            *sql.Stmt
+		editionAuthors    *sql.Stmt
+		editionPublishers *sql.Stmt
+		editionGenres     *sql.Stmt
+	}
+	transform bool
 }
 
 func (db *Postgres) create() {
@@ -75,6 +88,7 @@ func (db *Postgres) New(cli *common.CLI) {
 	db.host = cli.Postgres.Host
 	db.database = cli.Postgres.Database
 	db.init = cli.Init
+	db.transform = cli.Transform
 
 	port := cli.Postgres.Port
 	user := cli.Postgres.User
@@ -93,7 +107,10 @@ func (db *Postgres) New(cli *common.CLI) {
 }
 
 func (db *Postgres) Close() {
-	db.conn.Close()
+	err := db.conn.Close()
+	if err != nil {
+		log.Fatalf("Cannot close database connection: %s", err.Error())
+	}
 }
 
 func (db *Postgres) Name() string {

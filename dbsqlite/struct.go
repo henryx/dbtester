@@ -23,6 +23,7 @@ type SQLite struct {
 		editionPublishers *sql.Stmt
 		editionGenres     *sql.Stmt
 	}
+	transform bool
 }
 
 func (db *SQLite) create() {
@@ -87,6 +88,7 @@ func (db *SQLite) New(cli *common.CLI) {
 	db.rows = cli.Rows
 	db.database = cli.SQLite.Database
 	db.init = cli.Init
+	db.transform = cli.Transform
 
 	dsn := fmt.Sprintf("file:%s?_journal=WAL&_fk=true", db.database)
 	db.conn, err = sql.Open("sqlite3", dsn)
