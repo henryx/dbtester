@@ -1,6 +1,8 @@
 package dbpg
 
-import "log"
+import (
+	"log"
+)
 
 func (db *Postgres) Load(filename string) {
 	if !db.init {
@@ -13,5 +15,7 @@ func (db *Postgres) Load(filename string) {
 	}
 
 	db.loadJSON(db.rows, filename)
-	db.loadSchema()
+	if db.transform {
+		db.loadSchema()
+	}
 }
