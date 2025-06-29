@@ -84,6 +84,7 @@ func (db *SQLite) clean() {
 }
 
 func (db *SQLite) New(cli *common.CLI) {
+	var dsn string
 	var err error
 
 	db.rows = cli.Rows
@@ -91,7 +92,11 @@ func (db *SQLite) New(cli *common.CLI) {
 	db.init = cli.Init
 	db.transform = cli.Transform
 
-	dsn := fmt.Sprintf("file:%s?_journal=WAL&_fk=true", db.database)
+	dsn = fmt.Sprintf("file:%s?_journal=WAL&_fk=true", db.database)
+	if db.database == "" {
+		dsn = ":memory:"
+	}
+
 	log.Println("Connecting to database:", dsn)
 	db.conn, err = sql.Open("sqlite3", dsn)
 
