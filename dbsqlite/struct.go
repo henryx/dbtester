@@ -5,6 +5,7 @@ import (
 	"dbtest/common"
 	"fmt"
 	_ "github.com/mattn/go-sqlite3"
+	"log"
 )
 
 type SQLite struct {
@@ -91,6 +92,7 @@ func (db *SQLite) New(cli *common.CLI) {
 	db.transform = cli.Transform
 
 	dsn := fmt.Sprintf("file:%s?_journal=WAL&_fk=true", db.database)
+	log.Println("Connecting to database:", dsn)
 	db.conn, err = sql.Open("sqlite3", dsn)
 
 	if err != nil {

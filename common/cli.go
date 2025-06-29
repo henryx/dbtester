@@ -34,6 +34,6 @@ type CLI struct {
 		Database string `help:"Set the database name"  short:"D"`
 	} `cmd:"" help:"Execute MongoDB tests" name:"mongo"`
 	SQLite struct {
-		Database string `help:"Set the database name"  short:"D"`
+		Database string `help:"Set the database name"  short:"D" default:"test.db"`
 	} `cmd:"" help:"Execute SQLite tests" name:"sqlite"`
 }
